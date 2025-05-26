@@ -1,114 +1,76 @@
-export { Personal, Education, Experience };
-import { useState } from "react";
 import "./index.css";
+import { Header } from "./App";
+/* Add edge cases for buttons (e.g make sure empty entries don't submit.) */
 
-function Personal({ formData, setFormData, isActive, setActive }) {
-  const personal = ["fullname", "email", "phonenumber", "address"];
-
-  function handleOnChange(e) {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      personal: { ...prev.personal, [name]: value },
-    }));
+function Entries({ formData, id }) {
+  if (id == "education") {
+    return formData.education.map((currentEntry) => {
+      return (
+        <>
+          <div className="flex-row gap">
+            <p className="form-font">
+              {currentEntry["Start Date"]} - {currentEntry["End Date"]}
+              <em>{currentEntry.Location}</em>
+            </p>
+            <p className={`form-font`}>
+              <strong>{currentEntry.School}</strong>
+              <span>{currentEntry.Degree}</span>
+            </p>
+          </div>
+        </>
+      );
+    });
   }
-  function handleButtonClick() {
-    setActive((previous) => !previous);
+  if (id == "experience") {
+    return formData.experience.map((currentEntry) => {
+      return (
+        <>
+          <div className="flex-row gap">
+            <p className="form-font flex-column">
+              {currentEntry["Start Date"]} - {currentEntry["End Date"]}
+              <em>{currentEntry.Location}</em>
+            </p>
+            <p className={`form-font flex-column`}>
+              <strong>{currentEntry["Company Name"]}</strong>
+              <span>{currentEntry["Position Title"]}</span>
+              <span>{currentEntry.Description}</span>
+            </p>
+          </div>
+        </>
+      );
+    });
   }
-  return (
-    <>
-      <div className="wrapper flex-column">
-        <div className={`dropdown flex-row`}>
-          Personal Details
-          <i
-            onClick={handleButtonClick}
-            className={`fa-solid fa-arrow-down`}
-          ></i>
-        </div>
-      </div>
-      <div className={isActive ? `pd-form flex-column` : `hide`}>
-        {personal.map((label) => {
-          console.log(formData.personal[label]);
-          return (
-            <div className={`input-container flex-column`}>
-              <label>{label}</label>
-              <input
-                onChange={handleOnChange}
-                name={label}
-                value={formData.personal[label]}
-              />
-            </div>
-          );
-        })}
-      </div>
-    </>
-  );
-}
-function Education() {
-  const [isActive, setActive] = useState(false);
-  const personal = ["Full Name", "Email", "Phone Number", "Address"];
-
-  function handleButtonClick(e) {
-    setActive((previous) => !previous);
-  }
-  return (
-    <>
-      <div className="wrapper flex-column">
-        <div className={`dropdown flex-row`}>
-          Education
-          <i
-            onClick={handleButtonClick}
-            className={`fa-solid fa-arrow-down`}
-            id="education"
-          ></i>
-        </div>
-        <div className={isActive ? `edu-form flex-column` : `hide`}>
-          {personal.map((label) => {
-            return (
-              <div className={`input-container flex-column`}>
-                <label>{label}</label>
-                <input />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </>
-  );
 }
 
-function Experience() {
-  const [isActive, setActive] = useState(false);
-  const experience = [
-    "Company Name",
-    "Position Title",
-    "Start Date",
-    "End Date",
-    "Location",
-  ];
-  function handleButtonClick(e) {
-    setActive((previous) => !previous);
-  }
+export function FormPreview({ formData, setFormData }) {
   return (
-    <div className="wrapper flex-column">
-      <div className={`dropdown flex-row`}>
-        Experience
-        <i
-          onClick={handleButtonClick}
-          className={`fa-solid fa-arrow-down`}
-          id="experience"
-        ></i>
+    <>
+      <div className={`cv-container flex-column`}>
+        <Header
+          fullname={formData.personal["Full Name"]}
+          email={formData.personal.Email}
+          phonenumber={formData.personal["Phone Number"]}
+          address={formData.personal.Address}
+        />
+        <div className="form-container">
+          <h2 className="education">Education</h2>
+          <div className={`flex-column`}>
+            <Entries
+              formData={formData}
+              setFormData={setFormData}
+              id="education"
+            />
+          </div>
+        </div>
+        <div className="form-container">
+          <h2 className="experience">Personal Experience</h2>
+          <Entries
+            formData={formData}
+            setFormData={setFormData}
+            id="experience"
+          />
+        </div>
       </div>
-      <div className={isActive ? `exp-form flex-column` : `hide`}>
-        {experience.map((label) => {
-          return (
-            <div className={`input-container flex-column`}>
-              <label>{label}</label>
-              <input />
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    </>
   );
 }
